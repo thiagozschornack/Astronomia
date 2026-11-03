@@ -396,17 +396,28 @@ def('sky-atlas', {
       <button class="btn secondary" type="submit">Ir</button><a href="#sky">Mapa completo e visibilidade</a></form>
       <div id="${id}" class="aladin-box"><p class="loading" style="padding:12px">Carregando o atlas</p></div>`;
     $('.panel-plate', p).innerHTML = '';
+    let stage = 'load';
     try {
       await loadScript('https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js');
+      stage = 'init';
       await window.A.init;
       document.getElementById(id).innerHTML = '';
       const al = window.A.aladin(`#${id}`, { survey: 'P/DSS2/color', fov: 2, target: 'M42', showReticle: true });
       $('form', p).addEventListener('submit', (e) => { e.preventDefault(); al.gotoObject(e.target.obj.value); });
-    } catch {
-      document.getElementById(id).innerHTML = unavailable({ error: 'Não foi possível carregar o Aladin Lite (aladin.cds.unistra.fr).' }, 'Atlas');
+    } catch (err) {
+      console.error('[THZ] Aladin', stage, err);
+      document.getElementById(id).innerHTML = unavailable({ error: aladinError(stage, err) }, 'Atlas');
     }
   },
 });
+
+/** Mensagem que separa falha de download do Aladin de falha ao iniciá-lo (ex.: WebGL2 desligado). */
+export function aladinError(stage, err) {
+  const detail = err?.message ? ` Detalhe: ${String(err.message).slice(0, 160)}` : '';
+  return stage === 'load'
+    ? 'Não foi possível baixar o Aladin Lite (aladin.cds.unistra.fr). Verifique a conexão ou se algum bloqueador impede esse endereço.'
+    : `O Aladin Lite foi baixado, mas não iniciou neste aparelho/navegador (ele exige WebGL2).${detail}`;
+}
 
 // ================================================================== Operação
 const HEALTH = {

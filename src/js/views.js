@@ -4,7 +4,7 @@ import {
   $, $$, api, dms, esc, favButton, fill, fmtDT, fmtUTC, fmtInt, head, hms, loadScript, local, panelShell, plate,
   state, unavailable, workspace,
 } from './core.js?v=0.3.0';
-import { W, apodHTML, mount } from './widgets.js?v=0.3.0';
+import { W, aladinError, apodHTML, mount } from './widgets.js?v=0.3.0';
 import { addMarkers, mountSkyBodies, resetMarkers } from './explore.js?v=0.3.0';
 
 const grid = (root) => { root.insertAdjacentHTML('beforeend', '<div class="grid"></div>'); return root.lastElementChild; };
@@ -163,12 +163,14 @@ export function viewSky(root, params) {
   resetMarkers();
   const formSite = () => { const fd = new FormData($('#sky-form')); return { lat: Number(fd.get('lat')), lon: Number(fd.get('lon')), tz: String(fd.get('tz')).trim() }; };
   const loadSS = async () => { const env = await mountSkyBodies($('#sky-ss'), formSite, () => aladin); ssData = env.data; };
-  loadScript('https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js').then(() => window.A.init).then(() => {
+  let stage = 'load';
+  loadScript('https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js').then(() => { stage = 'init'; return window.A.init; }).then(() => {
     $('#aladin').innerHTML = '';
     aladin = window.A.aladin('#aladin', { survey: 'P/DSS2/color', fov: 1.5, target: start, cooFrame: 'ICRS', showReticle: true, showFullscreenControl: true, showLayersControl: true });
     if (ssData) addMarkers(aladin, ssData);
-  }).catch(() => {
-    $('#aladin').innerHTML = '<div class="unavailable" style="margin:16px"><strong>Atlas indisponível.</strong> Não foi possível carregar o Aladin Lite (aladin.cds.unistra.fr). O cálculo de visibilidade continua funcionando.</div>';
+  }).catch((err) => {
+    console.error('[THZ] Aladin', stage, err);
+    $('#aladin').innerHTML = `<div class="unavailable" style="margin:16px"><strong>Atlas indisponível.</strong> ${esc(aladinError(stage, err))} O cálculo de visibilidade continua funcionando.</div>`;
   });
   $('#survey').addEventListener('change', (e) => { if (aladin) (aladin.setImageSurvey || aladin.setBaseImageLayer).call(aladin, e.target.value); });
   $('#geo').addEventListener('click', () => {
