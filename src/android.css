@@ -1,0 +1,154 @@
+/* EmpreenderTHZ Astronomy Center — camada do app Android.
+   Carregada depois de styles.css. Troca o layout de site por um layout de app:
+   barra superior compacta, menu lateral deslizante, barra de atalhos inferior e áreas seguras (edge-to-edge). */
+:root {
+  /* Capacitor 8 (SystemBars) injeta --safe-area-inset-*; env() fica como reserva. */
+  --sa-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --sa-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --sa-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --sa-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+  --top-h: 56px;
+  --tab-h: 62px;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+html { scroll-padding-top: calc(var(--top-h) + var(--sa-top) + 8px); overscroll-behavior-y: none; }
+body.native {
+  display: block; min-height: 100dvh;
+  padding-left: var(--sa-left); padding-right: var(--sa-right);
+  font-size: 15px; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+  user-select: none; -webkit-user-select: none;
+}
+body.native::before { display: none; }
+/* texto de leitura continua selecionável */
+body.native .prose, body.native .panel-body p, body.native td, body.native dd, body.native input, body.native .plate, body.native pre { user-select: text; -webkit-user-select: text; }
+body.native .skip { display: none; }
+
+/* ---------------------------------------------------------------- barra superior */
+body.native .topbar {
+  position: sticky; top: 0; z-index: 30; height: calc(var(--top-h) + var(--sa-top));
+  padding: var(--sa-top) 10px 0 4px; gap: 8px; flex-wrap: nowrap;
+  background: rgba(4, 10, 26, .96);
+}
+.menu-btn { flex: none; width: 44px; height: 44px; display: inline-flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+  background: none; border: 0; border-radius: 10px; cursor: pointer; padding: 0; }
+.menu-btn span { width: 20px; height: 2px; border-radius: 2px; background: var(--star); transition: transform .2s, opacity .2s; }
+.menu-btn:active { background: var(--orbit); }
+body.nav-open .menu-btn span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+body.nav-open .menu-btn span:nth-child(2) { opacity: 0; }
+body.nav-open .menu-btn span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+body.native .brand { min-width: 0; flex: 1 1 auto; gap: 8px; }
+body.native .brand-text { min-width: 0; overflow: hidden; }
+body.native .brand-mark { flex: none; width: 26px; height: 26px; }
+body.native .brand-mark::after { inset: 8px -6px; }
+body.native .brand-name { font-size: 11px; }
+body.native .brand-product { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.native .brand img { height: 30px; }
+body.native .slogan { display: none; }
+body.native .clocks { margin-left: auto; gap: 10px; flex: none; }
+body.native .clock-label { font-size: 10px; max-width: 76px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.native .clock time { font-size: 15px; }
+body.native .sources-led { flex: none; width: 34px; height: 34px; padding: 0; justify-content: center; border-radius: 50%; }
+body.native #sources-led-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 520px) { body.native .clock:first-child { display: none; } }
+@media (max-width: 400px) {
+  body.native .brand-name { display: none; }
+}
+@media (max-width: 340px) { body.native .clocks { display: none; } }
+
+/* ---------------------------------------------------------------- menu lateral (gaveta) */
+body.native .sidenav {
+  position: fixed; z-index: 40; top: 0; bottom: 0; left: 0; width: min(300px, 84vw); height: 100dvh;
+  padding: calc(var(--sa-top) + 14px) 12px calc(var(--sa-bottom) + 16px) calc(12px + var(--sa-left));
+  flex-direction: column; overflow-y: auto; overscroll-behavior: contain;
+  background: var(--abyss); border-right: 1px solid var(--horizon); border-bottom: 0;
+  transform: translateX(-102%); transition: transform .22s ease; visibility: hidden;
+}
+body.nav-open .sidenav { transform: none; visibility: visible; box-shadow: 12px 0 40px rgba(0, 0, 0, .5); }
+body.native .sidenav a { min-height: 46px; display: flex; align-items: center; border-left: 3px solid transparent; border-bottom: 0; white-space: normal; font-size: 15.5px; }
+body.native .sidenav a[aria-current="page"] { border-left-color: var(--cyan); }
+body.native .nav-note { display: block; }
+.drawer-title { margin: 0 12px 8px; font: 600 12px var(--font-head); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.nav-scrim { position: fixed; inset: 0; z-index: 35; background: rgba(2, 5, 14, .6); }
+body.nav-open { overflow: hidden; }
+
+/* ---------------------------------------------------------------- conteúdo */
+body.native main { padding: 16px 14px calc(var(--tab-h) + var(--sa-bottom) + 28px); }
+body.native .view-head h1 { font-size: 24px; }
+body.native .view-head p { font-size: 14px; }
+body.native .grid { gap: 12px; }
+body.native .panel-head { padding: 12px 14px 4px; }
+body.native .panel-head h2 { font-size: 17px; }
+body.native .panel-body { padding: 6px 14px 12px; }
+body.native .plate { margin: 0 10px 10px; }
+body.native .chart { height: 240px; }
+body.native .chart.tall { height: 300px; }
+body.native .reading .value { font-size: 38px; }
+body.native #aladin, body.native .aladin-box { height: min(62vh, 460px); touch-action: none; }
+body.native dialog { max-width: calc(100vw - 20px); max-height: calc(100dvh - var(--sa-top) - var(--sa-bottom) - 20px); margin: auto; }
+body.native .dialog-inner { max-height: calc(100dvh - var(--sa-top) - var(--sa-bottom) - 24px); padding: 18px 16px; }
+body.native .dialog-close { width: 44px; height: 44px; right: 4px; top: 4px; }
+/* alvos de toque mínimos (48dp recomendados pelo Android) */
+body.native .btn, body.native .fav-btn { min-height: 42px; }
+body.native .chip { min-height: 36px; padding: 6px 14px; }
+body.native .icon-btn { width: 38px; height: 38px; font-size: 17px; }
+body.native input, body.native select { min-height: 42px; font-size: 16px; }
+body.native .mission-tabs { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+body.native .mission-tabs button { white-space: nowrap; }
+body.native .mission-head { flex-direction: column; align-items: stretch; }
+body.native .alert-types { grid-template-columns: 1fr; }
+body.native .event-item { grid-template-columns: 52px minmax(0, 1fr); gap: 10px; }
+.remind-btn[aria-pressed="true"] { color: var(--gold); border-color: rgba(216, 178, 90, .6); background: var(--gold-dim); }
+body.native .api-down { bottom: calc(var(--tab-h) + var(--sa-bottom) + 12px); }
+body.native .api-down .btn { margin-top: 8px; display: block; }
+body.native .toasts { bottom: calc(var(--tab-h) + var(--sa-bottom) + 12px); right: calc(12px + var(--sa-right)); left: calc(12px + var(--sa-left)); max-width: none; }
+.net-down { position: sticky; top: calc(var(--top-h) + var(--sa-top)); z-index: 25; margin: 0; padding: 8px 14px; font-size: 13.5px;
+  background: #2a1414; color: #f3e3e0; border-bottom: 1px solid #c0645a; }
+
+/* ---------------------------------------------------------------- painel maximizado (substitui a tela cheia do navegador) */
+body.has-max { overflow: hidden; }
+.panel.panel--max {
+  position: fixed; z-index: 45; inset: 0; border-radius: 0; border: 0; overflow: auto; overscroll-behavior: contain;
+  padding: var(--sa-top) var(--sa-right) var(--sa-bottom) var(--sa-left); background: var(--abyss);
+}
+.panel.panel--max .chart, .panel.panel--max .chart.tall { height: min(70dvh, 560px); }
+.panel.panel--max .solar-canvas-wrap { height: 72dvh; }
+.panel.panel--max [data-fs] { color: var(--abyss); background: var(--cyan); border-color: var(--cyan); }
+body.has-max .tabbar { display: none; }
+
+/* ---------------------------------------------------------------- barra de atalhos inferior */
+.tabbar {
+  position: fixed; z-index: 30; left: 0; right: 0; bottom: 0;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  height: calc(var(--tab-h) + var(--sa-bottom)); padding: 0 var(--sa-right) var(--sa-bottom) var(--sa-left);
+  background: rgba(4, 10, 26, .97); border-top: 1px solid var(--horizon); backdrop-filter: blur(8px);
+}
+.tabbar a, .tabbar button {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  color: var(--muted); text-decoration: none; font: 500 11.5px var(--font-ui); background: none; border: 0; cursor: pointer; padding: 0;
+}
+.tabbar a[aria-current="page"] { color: var(--cyan); }
+.tabbar a:active, .tabbar button:active { background: var(--orbit); }
+.tab-ico { width: 24px; height: 24px; display: block; background: currentColor;
+  -webkit-mask: var(--ico) center / contain no-repeat; mask: var(--ico) center / contain no-repeat; }
+.ico-home { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='8' height='8' rx='1.5'/%3E%3Crect x='13' y='3' width='8' height='5' rx='1.5'/%3E%3Crect x='13' y='10' width='8' height='11' rx='1.5'/%3E%3Crect x='3' y='13' width='8' height='8' rx='1.5'/%3E%3C/svg%3E"); }
+.ico-sun { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='4.5'/%3E%3Cpath d='M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8'/%3E%3C/svg%3E"); }
+.ico-orbit { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cellipse cx='12' cy='12' rx='10' ry='4.2' transform='rotate(-25 12 12)'/%3E%3Ccircle cx='20' cy='8.3' r='1.4' fill='black'/%3E%3C/svg%3E"); }
+.ico-cal { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Crect x='3.5' y='5' width='17' height='15.5' rx='2'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3Cpath d='M12 13.2l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 15.3l2-.3z' fill='black' stroke='none'/%3E%3C/svg%3E"); }
+.ico-more { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Ccircle cx='5' cy='12' r='2'/%3E%3Ccircle cx='12' cy='12' r='2'/%3E%3Ccircle cx='19' cy='12' r='2'/%3E%3C/svg%3E"); }
+
+/* ---------------------------------------------------------------- tablets na horizontal: menu fixo, sem barra inferior */
+@media (min-width: 1000px) {
+  body.native { display: grid; grid-template-columns: var(--nav-w) 1fr; grid-template-rows: auto 1fr; grid-template-areas: "top top" "nav main"; }
+  body.native .menu-btn, .tabbar, .nav-scrim { display: none !important; }
+  body.native .sidenav { position: sticky; top: calc(var(--top-h) + var(--sa-top)); transform: none; visibility: visible; width: auto;
+    height: calc(100dvh - var(--top-h) - var(--sa-top)); padding: 18px 12px calc(var(--sa-bottom) + 16px); box-shadow: none; }
+  body.native .drawer-title { display: none; }
+  body.native main { grid-area: main; padding: 22px 24px calc(var(--sa-bottom) + 40px); }
+  body.native .topbar { grid-area: top; padding-left: 16px; }
+  body.native .slogan { display: block; }
+  body.native #sources-led-text { position: static; width: auto; height: auto; clip: auto; }
+  body.native .sources-led { width: auto; height: auto; padding: 6px 12px; border-radius: 999px; }
+  body.native .api-down, body.native .toasts { bottom: calc(16px + var(--sa-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) { body.native .sidenav { transition: none; } }

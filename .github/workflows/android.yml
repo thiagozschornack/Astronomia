@@ -1,0 +1,86 @@
+# Compila o app Android do EmpreenderTHZ Astronomy Center na nuvem do GitHub.
+# - A cada push na main: gera um APK de teste (debug) para instalar no celular.
+# - Ao criar uma tag v* (ex.: v0.3.0) ou rodar manualmente com "release": gera o .aab assinado para a Google Play.
+# Segredos necessários só para o release (Settings → Secrets and variables → Actions):
+#   ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
+name: App Android
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Gerar também o .aab assinado para a Google Play'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Instalar dependências
+        run: npm install --no-audit --no-fund
+
+      - name: Montar a interface e o projeto Android
+        run: |
+          if [ -d android ]; then npm run android:sync; else npm run android:add; fi
+
+      - name: APK de teste (debug)
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: astronomy-center-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+
+      - name: Chave de assinatura
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then echo "::error::Segredo ANDROID_KEYSTORE_BASE64 não configurado"; exit 1; fi
+          echo "$KEYSTORE_B64" | base64 -d > android/app/astronomy-release.jks
+          printf 'storeFile=astronomy-release.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' "$STORE_PASS" "$KEY_ALIAS" "$KEY_PASS" > android/keystore.properties
+
+      - name: App Bundle assinado (Google Play)
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release
+        working-directory: android
+        run: ./gradlew bundleRelease assembleRelease --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release
+        with:
+          name: astronomy-center-release
+          path: |
+            android/app/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/apk/release/*.apk
+          retention-days: 90
+
+      - name: Limpar a chave
+        if: always()
+        run: rm -f android/app/astronomy-release.jks android/keystore.properties

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>EmpreenderTHZ Astronomy Center</title>
+  <meta name="description" content="Centro astronômico virtual da EmpreenderTHZ: dados científicos oficiais com procedência identificada.">
+  <meta name="theme-color" content="#040A1A">
+  <meta name="color-scheme" content="dark">
+  <meta name="format-detection" content="telephone=no">
+  <!-- App Android: fontes e ECharts vêm empacotados (vendor/), para abrir rápido e funcionar com rede fraca. -->
+  <link rel="stylesheet" href="vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="styles.css?v=0.3.0">
+  <link rel="stylesheet" href="android.css?v=0.3.0">
+  <script src="config.js?v=0.3.0"></script>
+  <script src="vendor/native.js?v=0.3.0"></script>
+  <script src="vendor/echarts.min.js" defer></script>
+  <script src="app.js?v=0.3.0" type="module"></script>
+</head>
+<body class="native">
+  <header class="topbar">
+    <button class="menu-btn" type="button" id="menu-btn" aria-label="Abrir menu" aria-controls="sidenav" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="#overview" aria-label="EmpreenderTHZ Astronomy Center — painel geral">
+      <img id="brand-logo" alt="" hidden>
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-text">
+        <span class="brand-name">EmpreenderTHZ</span>
+        <span class="brand-product">Astronomy Center</span>
+      </span>
+    </a>
+    <p class="slogan">Explore o universo. Descubra o conhecimento.</p>
+    <div class="clocks" aria-label="Relógios">
+      <div class="clock"><span class="clock-label">UTC</span><time id="clock-utc">--:--:--</time></div>
+      <div class="clock"><span class="clock-label" id="clock-local-label">Local</span><time id="clock-local">--:--:--</time></div>
+    </div>
+    <a class="sources-led" id="sources-led" href="#ops" title="Estado das fontes científicas">
+      <span class="led" aria-hidden="true"></span><span id="sources-led-text">Fontes: verificando</span>
+    </a>
+  </header>
+
+  <div class="nav-scrim" id="nav-scrim" hidden></div>
+  <nav class="sidenav" id="sidenav" aria-label="Módulos">
+    <p class="drawer-title">Módulos</p>
+    <a href="#overview" data-route="overview">Painel geral</a>
+    <a href="#mission" data-route="mission">Mission Control</a>
+    <a href="#space-weather" data-route="space-weather">Sol e clima espacial</a>
+    <a href="#neo" data-route="neo">Objetos próximos à Terra</a>
+    <a href="#exoplanets" data-route="exoplanets">Exoplanetas</a>
+    <a href="#images" data-route="images">Imagens espaciais</a>
+    <a href="#solar-system" data-route="solar-system">Sistema Solar 3D</a>
+    <a href="#events" data-route="events">Eventos astronômicos</a>
+    <a href="#sky" data-route="sky">Mapa celeste</a>
+    <a href="#telescopes" data-route="telescopes">Telescópios</a>
+    <a href="#favorites" data-route="favorites">Favoritos</a>
+    <a href="#ops" data-route="ops">Operação da plataforma</a>
+    <div class="nav-note">
+      <p id="stream-state" data-up="false">Atualização automática: conectando</p>
+      <p>Etapa 3 · app Android <span id="app-version"></span></p>
+      <p><a href="#privacy">Privacidade</a></p>
+    </div>
+  </nav>
+
+  <div class="api-down" id="api-down" role="alert" hidden></div>
+  <div class="net-down" id="net-down" role="status" hidden>Sem internet. Os painéis voltam a carregar quando a conexão retornar.</div>
+  <main id="view" tabindex="-1" aria-live="polite"></main>
+
+  <nav class="tabbar" aria-label="Atalhos">
+    <a href="#overview" data-route="overview"><span class="tab-ico ico-home" aria-hidden="true"></span>Painel</a>
+    <a href="#space-weather" data-route="space-weather"><span class="tab-ico ico-sun" aria-hidden="true"></span>Sol</a>
+    <a href="#solar-system" data-route="solar-system"><span class="tab-ico ico-orbit" aria-hidden="true"></span>Sistema</a>
+    <a href="#events" data-route="events"><span class="tab-ico ico-cal" aria-hidden="true"></span>Eventos</a>
+    <button type="button" id="tab-more" aria-controls="sidenav"><span class="tab-ico ico-more" aria-hidden="true"></span>Mais</button>
+  </nav>
+
+  <dialog id="detail" aria-labelledby="detail-title">
+    <div class="dialog-inner">
+      <button class="dialog-close" type="button" aria-label="Fechar">×</button>
+      <div id="detail-body"></div>
+    </div>
+  </dialog>
+</body>
+</html>

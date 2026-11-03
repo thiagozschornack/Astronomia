@@ -1,0 +1,35 @@
+{
+  "name": "empreenderthz-astronomy-center-android",
+  "version": "0.3.0",
+  "private": true,
+  "description": "EmpreenderTHZ Astronomy Center — app Android (Capacitor 8), Etapa 3",
+  "author": "EmpreenderTHZ",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "serve": "node scripts/build.mjs && node scripts/serve.mjs",
+    "android:add": "node scripts/build.mjs && npx cap add android && node scripts/android-setup.mjs",
+    "android:sync": "node scripts/build.mjs && npx cap sync android && node scripts/android-setup.mjs",
+    "android:open": "npx cap open android",
+    "android:run": "node scripts/build.mjs && npx cap sync android && node scripts/android-setup.mjs && npx cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/browser": "^8.0.0",
+    "@capacitor/clipboard": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/local-notifications": "^8.0.0",
+    "@capacitor/network": "^8.0.0",
+    "@capacitor/splash-screen": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0",
+    "@fontsource/ibm-plex-sans": "^5.1.0",
+    "@fontsource/saira-semi-condensed": "^5.1.0",
+    "echarts": "5.5.1",
+    "esbuild": "^0.25.0"
+  }
+}

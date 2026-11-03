@@ -1,0 +1,33 @@
+{
+  "appId": "br.com.empreenderthz.astronomy",
+  "appName": "Astronomy Center",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#040A1A",
+    "allowMixedContent": false,
+    "captureInput": true
+  },
+  "plugins": {
+    "SystemBars": {
+      "style": "LIGHT"
+    },
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchAutoHide": true,
+      "launchFadeOutDuration": 250,
+      "backgroundColor": "#040A1A",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP"
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_thz",
+      "iconColor": "#4FD6EC"
+    },
+    "CapacitorHttp": {
+      "enabled": false
+    }
+  }
+}
