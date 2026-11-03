@@ -7,5 +7,5 @@ window.THZ_CONFIG = {
   siteBase: 'https://empreenderthz.com.br/Astronomia',
   // Atualização em tempo real por SSE (/api/stream). Use false se a hospedagem não mantiver conexões longas;
   // nesse caso os painéis são recarregados a cada 10 minutos e sempre que o app volta para a frente.
-  stream: true,
+  stream: false, // a API no cPanel roda com SCHEDULER_ENABLED=false: sem eventos de tempo real
 };
